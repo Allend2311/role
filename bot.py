@@ -3,21 +3,22 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-TOKEN = os.getenv("TOKEN")  # Make sure this matches Render environment variable name
-bot.run(TOKEN)
-# Intents
+# ---------------- TOKEN ----------------
+TOKEN = os.getenv("TOKEN")  # Make sure you set this in Render environment variables
+
+# ---------------- INTENTS ----------------
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True  # Required for role management
 
-# Bot setup
+# ---------------- BOT SETUP ----------------
 bot = commands.Bot(command_prefix="!", intents=intents)
 tree = bot.tree
 
 # Staff role names
 STAFF_ROLES = ["👑- Godfather", "Father"]
 
-# Vouch dictionary (example in-memory storage)
+# Vouch dictionary (in-memory storage)
 vouches = {}  # {user_id: [vouched_by_user_ids]}
 
 # ---------- EVENTS ----------
@@ -31,7 +32,6 @@ async def on_ready():
         print(e)
 
 # ---------- COMMANDS ----------
-# Example ping command
 @bot.command()
 async def ping(ctx):
     await ctx.send("Pong!")
@@ -51,18 +51,15 @@ async def role(interaction: discord.Interaction, role_name: str):
 @tree.command(name="vouch", description="Vouch for a verified user")
 @app_commands.describe(user="The user you want to vouch for")
 async def vouch(interaction: discord.Interaction, user: discord.Member):
-    # Check if the voucher has a verified role
     verified_roles = ["Verified"]  # Change to your verified role names
     if not any(role.name in verified_roles for role in interaction.user.roles):
         await interaction.response.send_message("You must be verified to vouch!", ephemeral=True)
         return
     
-    # Prevent self-vouch
     if user.id == interaction.user.id:
         await interaction.response.send_message("You cannot vouch for yourself!", ephemeral=True)
         return
     
-    # Save vouch
     if user.id not in vouches:
         vouches[user.id] = []
     if interaction.user.id in vouches[user.id]:
@@ -84,5 +81,4 @@ async def vouched_by(interaction: discord.Interaction, user: discord.Member):
     await interaction.response.send_message(f"{user.display_name} was vouched by: {', '.join(names)}", ephemeral=True)
 
 # ---------- RUN BOT ----------
-TOKEN = os.getenv("TOKEN")  # Set your bot token in Render environment variables
 bot.run(TOKEN)
