@@ -28,7 +28,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 tree = bot.tree
 
 # ---------------- CONFIG ----------------
-GUILD_ID = 123456789012345678  # ⚠️ PUT YOUR SERVER ID HERE
+GUILD_ID = 1455586724578332775  # ⚠️ PUT YOUR SERVER ID HERE
 VERIFIED_ROLE = "Verified"
 
 vouches = {}
